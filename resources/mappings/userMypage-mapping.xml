@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMypageDAO">
+
+<!-- 유저 마이페이지 댓글  -->
+	<resultMap id="selectReplyResult" type="TogetherReplyVO">
+		<result property="trNo" column="tr_no"/>		
+		<result property="tNo" column="t_no"/>		
+		<result property="trContent" column="tr_content"/>		
+		<result property="trCredate" column="tr_credate"/>		
+		
+		<association property="userVO" resultMap="replyUserResult"></association>
+		<association property="togetherBoardVO" resultMap="tPostResult"></association>
+	</resultMap>
+	
+	<resultMap id="replyUserResult" type="user">
+			<result property="uPic" column="u_pic"/>		 
+			<result property="uNick" column="u_nick"/>		 
+			<result property="uNo" column="u_no"/>		 
+	</resultMap>
+	
+	<resultMap id="tPostResult" type="togetherBoardVO">
+		<result property="hNo" column="h_no"/>		
+		<result property="tNo" column="t_no"/>		
+		<result property="tHeader" column="t_header"/>		
+		<result property="tPic1" column="t_pic1"/>	
+		<result property="tAddress" column="t_address"/>	
+		<result property="tCredate" column="t_credate"/>	
+		<result property="tHits" column="t_hits"/>	
+		<result property="tJoinDate" column="t_joindate"/>	
+		<result property="tTitle" column="t_title"/>	
+		
+	</resultMap>
+					<!-- 리스트 출력하기 -->
+	<select id="selectReplyEat" resultMap="selectReplyResult">		 
+	SELECT together_reply.tr_no, together_reply.t_no, together_reply.tr_content, together_reply.tr_credate, users.u_no, together_board.t_header, together_board.t_title
+	FROM together_reply   
+	LEFT JOIN users ON together_reply.u_no =  users.u_no
+	LEFT JOIN together_board ON together_board.t_no = together_reply.t_no
+	WHERE users.u_no = #{uNo}
+		<choose>
+			<when test = 'tHeader.equals("함께먹어요")'>
+			AND together_board.t_header= #{tHeader}
+			</when>
+			<when test = 'tHeader.equals("함께출퇴근해요")'>
+			AND together_board.t_header= #{tHeader}
+			</when>
+			<when test = 'tHeader.equals("함께나눠요")'>
+			AND together_board.t_header=#{tHeader}
+			</when>
+		</choose>
+	</select>
+	
+	<delete id="deleteReply">
+		DELETE FROM together_reply WHERE tr_no = #{trNo}
+	</delete>
+	<delete id="deleteReply_all">
+		DELETE FROM together_reply WHERE u_no = #{uNo}
+	</delete>
+
+
+
+<!--유저 마이페이지 내가 쓴 글 -->
+	<resultMap id="selectPostResult" type="TogetherBoardVO">
+		<result property="hNo" column="h_no"/>		
+		<result property="tNo" column="t_no"/>		
+		<result property="tHeader" column="t_header"/>		
+		<result property="tPic1" column="t_pic1"/>	
+		<result property="tAddress" column="t_address"/>	
+		<result property="tCredate" column="t_credate"/>	
+		<result property="tHits" column="t_hits"/>	
+		<result property="tJoinDate" column="t_joindate"/>	
+		<result property="tTitle" column="t_title"/>	
+	</resultMap>
+	<select id="selectPost" resultMap="selectPostResult">		 
+		SELECT t_header, t_title, t_credate, t_pic1, h_no
+		FROM  together_board
+		WHERE together_board.h_no=#{uNo};
+	</select>
+	
+	<resultMap id="userResult" type="user">
+		<id property="uNo" column="u_no"/>		<!-- 회원번호 -->
+		<result property="uName" column="u_name"/>		<!-- 이름 -->
+		<result property="uEmail" column="u_email"/>		<!-- 이메일 -->
+		<result property="uPwd" column="u_pwd"/>		<!-- 비밀번호 -->
+		<result property="uPhone" column="u_phone"/>		<!-- 휴대전화 -->
+		<result property="uAddress" column="u_address"/>		<!-- 주소 -->
+		<result property="uLat" column="u_lat"/>		<!-- 위도 -->
+		<result property="uLon" column="u_lon"/>		<!-- 경도 -->
+		<result property="uAgreecheck" column="u_agreecheck"/>		<!-- 약관동의 -->
+		<result property="uPic" column="u_pic"/>		<!-- 사진 -->
+		<result property="uNick" column="u_nick"/>		<!-- 별명 -->
+	</resultMap>
+<!-- 마이페이지에 개인정보 가져오기  -->
+	<select id="selectOneUser" resultMap="userResult">
+		SELECT * FROM users WHERE u_email = #{uEmail} AND u_pwd = #{uPwd}
+	</select>
+	
+<!-- 비밀번호 비교할 때 값을 가져와라 -->	
+	<select id="selectOnePwd" resultMap="userResult">
+		SELECT u_pwd FROM users WHERE u_no = #{uNo}
+		
+	</select>
+	
+<!-- 마이페이지에 비밀번호 수정하기  -->
+	<update id="updateUserPwd">
+		UPDATE users SET u_pwd=#{uPwd} WHERE u_email = #{uEmail} 
+	</update>
+
+<!-- 마이페이지에서 계정 탈퇴하기  -->	
+	<delete id="deleteoneUser">
+		DELETE FROM users WHERE u_no = #{uNo} 
+	</delete>
+	
+	<update id ="updateMypageProfile">	<!-- 한 화면에서 다 업뎃 -->
+		UPDATE users SET u_name = #{uName}, u_pwd=#{uPwd}, u_pic=#{uPic}, u_nick = #{uNick}
+		WHERE u_email = #{uEmail}
+	</update>
+	
+	<update id="updateMypage" ><!-- 한 화면에서 닉네임, 사진 업뎃 -->
+		UPDATE users SET u_nick = #{uNick}, u_pic= #{uPic}
+		WHERE u_no = #{uNo}
+
+	</update>
+
+</mapper>
