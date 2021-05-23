@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+#contents {
+	position: relative;
+	width: 760px;
+	height: auto;
+	left: 50%;
+	top: 10%;
+	background: rgba(196, 196, 196, 0.1);
+	border-radius: 30px;
+	transform: translate(-50%, 3%);
+	font-size:15px;
+}
+#updateheader {
+	position: absolute;
+	top: -2%;
+	left: 3%;
+	font-size: 20px;
+	font-weight: bold;
+}
+#map {
+    width: 600px;
+    height: 250px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display:hidden;
+}
+#map2 {
+    width: 600px;
+    height: 250px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display:hidden;
+}
+#updateFormBox {
+	margin:50px;
+}
+#footer {
+	position: relative;
+	bottom: -300px;
+}
+
+.image_preview{
+	position: relative;
+	transform:translate(-50%, 0%);
+	left:50%;
+	height:240px; 
+	width:350px;
+}
+
+#updatebutton {
+	position: relative;
+	left: 91%;
+	top: 90%;
+	transform: translate(-50%, 0%);
+	margin-top:25px;
+}
+
+#updateForm{
+	padding:30px;
+}
+
